@@ -1,12 +1,16 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@types/dom-mediacapture-record': ^1.0.13
+  '@types/dom-speech-recognition': ^0.0.1
   '@types/node': 18.15.11
   '@types/react': 18.0.31
   '@types/react-dom': 18.0.11
   autoprefixer: ^10.4.14
+  clsx: ^1.2.1
   eslint: 8.37.0
   eslint-config-next: 13.2.4
+  framer-motion: ^10.10.0
   next: 13.2.4
   postcss: ^8.4.21
   react: 18.2.0
@@ -15,11 +19,15 @@ specifiers:
   typescript: 5.0.2
 
 dependencies:
+  '@types/dom-mediacapture-record': 1.0.15
+  '@types/dom-speech-recognition': 0.0.1
   '@types/node': 18.15.11
   '@types/react': 18.0.31
   '@types/react-dom': 18.0.11
+  clsx: 1.2.1
   eslint: 8.37.0
   eslint-config-next: 13.2.4_bcnce6t2n5ss3lv2getliffzhq
+  framer-motion: 10.10.0_biqbaboplfbrettd7655fr4n2y
   next: 13.2.4_biqbaboplfbrettd7655fr4n2y
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -38,6 +46,19 @@ packages:
     dependencies:
       regenerator-runtime: 0.13.11
     dev: false
+
+  /@emotion/is-prop-valid/0.8.8:
+    resolution: {integrity: sha512-u5WtneEAr5IDG2Wv65yhunPSMLIpuKsbuOktRojfrEiEvRyC85LgPMZI63cr7NUqT8ZIGdSVg8ZKGxIug4lXcA==}
+    requiresBuild: true
+    dependencies:
+      '@emotion/memoize': 0.7.4
+    dev: false
+    optional: true
+
+  /@emotion/memoize/0.7.4:
+    resolution: {integrity: sha512-Ja/Vfqe3HpuzRsG1oBtWTHk2PGZ7GR+2Vz5iYGelAw8dx32K0y7PjVuxK6z1nMpZOqAFsRUPCkK1YjJ56qJlgw==}
+    dev: false
+    optional: true
 
   /@eslint-community/eslint-utils/4.4.0_eslint@8.37.0:
     resolution: {integrity: sha512-1/sA4dwrzBAyeUoQ6oxahHKmrZvsnLCg4RfxW3ZFGGmQkSNQPFNLV9CUEFQP1x9EYXHTo5p6xdhZM1Ne9p/AfA==}
@@ -261,6 +282,14 @@ packages:
     resolution: {integrity: sha512-4C7nX/dvpzB7za4Ql9K81xK3HPxCpHMgwTZVyf+9JQ6VUbn9jjZVN7/Nkdz/Ugzs2CSjqnL/UPXroiVBVHUWUw==}
     dependencies:
       tslib: 2.5.0
+    dev: false
+
+  /@types/dom-mediacapture-record/1.0.15:
+    resolution: {integrity: sha512-OGAqHb71kGeFZ1pIxUOnPTfwTNF90I+VrfUHWoqwn/rH93d8dofiwFYmxX4Aaddz5KBGd+xQf2eiomwnnL7qBg==}
+    dev: false
+
+  /@types/dom-speech-recognition/0.0.1:
+    resolution: {integrity: sha512-udCxb8DvjcDKfk1WTBzDsxFbLgYxmQGKrE/ricoMqHRNjSlSUCcamVTA5lIQqzY10mY5qCY0QDwBfFEwhfoDPw==}
     dev: false
 
   /@types/json5/0.0.29:
@@ -581,6 +610,11 @@ packages:
 
   /client-only/0.0.1:
     resolution: {integrity: sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==}
+    dev: false
+
+  /clsx/1.2.1:
+    resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
+    engines: {node: '>=6'}
     dev: false
 
   /color-convert/2.0.1:
@@ -1159,6 +1193,24 @@ packages:
   /fraction.js/4.2.0:
     resolution: {integrity: sha512-MhLuK+2gUcnZe8ZHlaaINnQLl0xRIGRfcGk2yl8xoQAfHrSsL3rYu6FCmBdkdbhc9EPlwyGHewaRsvwRMJtAlA==}
     dev: true
+
+  /framer-motion/10.10.0_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-eCsyOcJimIRbx9KOzBTO3j9u1rF/H8/o/ybizYqdrzHkEeHx9L2NcEfGWfV0OHTc1JV17ECVzuZpomupEJ4+dw==}
+    peerDependencies:
+      react: ^18.0.0
+      react-dom: ^18.0.0
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-dom:
+        optional: true
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      tslib: 2.5.0
+    optionalDependencies:
+      '@emotion/is-prop-valid': 0.8.8
+    dev: false
 
   /fs.realpath/1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
