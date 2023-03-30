@@ -19,15 +19,6 @@ export const App = () => {
         <span className="opacity-50">{speechRecognition.interimOutput}</span>
       </div>
 
-      <div>
-        {speechRecognition.detailedTranscripts.map((transcript, index) => (
-          <div key={index}>
-            {transcript.transcript} start: {transcript.startTimestamp} duration:{" "}
-            {transcript.duration}
-          </div>
-        ))}
-      </div>
-
       {!speechRecognition.isListening &&
         speechRecognition.detailedTranscripts.length > 0 && (
           <button onClick={() => setShowAnimatedTranscript((prev) => !prev)}>

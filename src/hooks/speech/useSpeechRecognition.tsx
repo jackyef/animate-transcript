@@ -29,11 +29,26 @@ export const useSpeechRecognition = ({ language }: Params) => {
     DetailedTranscript[]
   >([]);
   const timestamps = useRef<number[]>([]);
+  const timestampOfLastEvent = useRef<number>(0);
 
   const toggleListeningState = () => {
     if (isListening) {
       speechRecognition?.stop();
       stopRecording();
+      setDetailedTranscripts((prev) => {
+        const now = new Date().getTime();
+        const last = prev[prev.length - 1];
+
+        // Add a dummy entry to mark the end of the audio recording
+        return [
+          ...prev,
+          {
+            transcript: interimOutput,
+            startTimestamp: last.startTimestamp + last.duration,
+            duration: now - timestampOfLastEvent.current,
+          },
+        ];
+      });
 
       return;
     }
@@ -128,6 +143,8 @@ export const useSpeechRecognition = ({ language }: Params) => {
             const duration = event.timeStamp - startTimestamp;
             const transcript = addedFinalTranscript;
 
+            timestampOfLastEvent.current = new Date().getTime();
+
             return [...prev, { transcript, startTimestamp, duration }];
           });
         } else {
@@ -195,7 +212,7 @@ export const useSpeechRecognition = ({ language }: Params) => {
     detailedTranscripts,
     audioRecordingBlobUrl: mediaBlobUrl,
     clear: () => {
-      setOutput("")
+      setOutput("");
     },
   };
 };
