@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
+import { useReactMediaRecorder } from "react-media-recorder";
 
-export type Language = 'en-US' | 'id-ID';
+export type Language = "en-US" | "id-ID";
 export type DetailedTranscript = {
   transcript: string;
   startTimestamp: number;
   duration: number;
-}
+};
 
 const endsWithWhitespace = /\s$/;
 
@@ -14,45 +15,52 @@ type Params = {
 };
 
 export const useSpeechRecognition = ({ language }: Params) => {
+  const { startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder(
+    { video: false }
+  );
+
   const [speechRecognition, setSpeechRecognition] =
     useState<SpeechRecognition | null>(null);
   const [isListening, setIsListening] = useState(false);
-  const [output, setOutput] = useState('');
-  const [interimOutput, setInterimOutput] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [detailedTranscripts, setDetailedTranscripts] = useState<DetailedTranscript[]>([])
-  const shouldCollectStartTimestamp = useRef(true);
-  const currentTranscriptStartTimestamp = useRef<number | null>(null)
+  const [output, setOutput] = useState("");
+  const [interimOutput, setInterimOutput] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [detailedTranscripts, setDetailedTranscripts] = useState<
+    DetailedTranscript[]
+  >([]);
+  const timestamps = useRef<number[]>([]);
 
   const toggleListeningState = () => {
     if (isListening) {
       speechRecognition?.stop();
+      stopRecording();
 
       return;
     }
 
     speechRecognition?.start();
-    setInterimOutput('');
+    startRecording();
+    setInterimOutput("");
   };
 
   const showErrorState = (
-    errorType: SpeechRecognitionErrorCode | 'unsupported' | 'unknown',
+    errorType: SpeechRecognitionErrorCode | "unsupported" | "unknown"
   ) => {
-    if (errorType === 'not-allowed') {
+    if (errorType === "not-allowed") {
       setErrorMessage(
-        'Access to microphone is blocked. Please allow this site to access your microphone for the demo to work.',
+        "Access to microphone is blocked. Please allow this site to access your microphone for the demo to work."
       );
-    } else if (errorType === 'audio-capture') {
+    } else if (errorType === "audio-capture") {
       setErrorMessage(
-        'No audio capture device found. Please make sure you have a working microphone connected to the computer and try reloading the page.',
+        "No audio capture device found. Please make sure you have a working microphone connected to the computer and try reloading the page."
       );
-    } else if (errorType === 'unsupported') {
+    } else if (errorType === "unsupported") {
       setErrorMessage(
-        'Web Speech API is not supported on your browser. Try using latest version of Chrome for the best experience.',
+        "Web Speech API is not supported on your browser. Try using latest version of Chrome for the best experience."
       );
     } else {
       setErrorMessage(
-        'An unexpected error occured. If you could reproduce the issue please open an issue on the Github repo, thanks! Check the console for the logged error event.',
+        "An unexpected error occured. If you could reproduce the issue please open an issue on the Github repo, thanks! Check the console for the logged error event."
       );
     }
   };
@@ -68,13 +76,13 @@ export const useSpeechRecognition = ({ language }: Params) => {
       });
     } else {
       // Clear interim output
-      setInterimOutput('');
+      setInterimOutput("");
     }
   }, [isListening]);
 
   useEffect(() => {
-    if (!('webkitSpeechRecognition' in window)) {
-      showErrorState('unsupported');
+    if (!("webkitSpeechRecognition" in window)) {
+      showErrorState("unsupported");
       return;
     }
 
@@ -98,33 +106,30 @@ export const useSpeechRecognition = ({ language }: Params) => {
         recognition.stop();
       }
 
-      console.log('[WebSpeechAPIDemo result]', event)
-
-      if (shouldCollectStartTimestamp.current) {
-        currentTranscriptStartTimestamp.current = event.timeStamp
-        shouldCollectStartTimestamp.current = false;
-      }
       const isLastFinal = event.results[event.results.length - 1].isFinal;
 
-      let interimTranscript = '';
-      let addedFinalTranscript = '';
+      let interimTranscript = "";
+      let addedFinalTranscript = "";
 
       for (let i = event.resultIndex; i < event.results.length; ++i) {
         const transcript = event.results[i][0].transcript;
+
+        if (typeof timestamps.current[i] === "undefined") {
+          if (i === 0 || event.results[i - 1].isFinal) {
+            timestamps.current[i] = event.timeStamp;
+          }
+        }
 
         if (event.results[i].isFinal) {
           addedFinalTranscript += transcript;
 
           setDetailedTranscripts((prev) => {
-            const duration = event.timeStamp - currentTranscriptStartTimestamp.current!
-            const startTimestamp = currentTranscriptStartTimestamp.current!
-            const transcript = addedFinalTranscript
+            const startTimestamp = timestamps.current[i];
+            const duration = event.timeStamp - startTimestamp;
+            const transcript = addedFinalTranscript;
 
-            return [...prev, { transcript, startTimestamp, duration }]
-          })
-
-          shouldCollectStartTimestamp.current = true;
-          currentTranscriptStartTimestamp.current = null;
+            return [...prev, { transcript, startTimestamp, duration }];
+          });
         } else {
           interimTranscript += transcript;
         }
@@ -132,7 +137,7 @@ export const useSpeechRecognition = ({ language }: Params) => {
 
       setOutput((prev) => {
         if (isLastFinal) {
-          return prev + addedFinalTranscript + '<br>';
+          return prev + addedFinalTranscript + "<br>";
         }
         return prev + addedFinalTranscript;
       });
@@ -142,33 +147,33 @@ export const useSpeechRecognition = ({ language }: Params) => {
     recognition.onerror = (event) => {
       const errorType = event.error;
 
-      console.error('[WebSpeechAPIDemo error]', event);
+      console.error("[WebSpeechAPIDemo error]", event);
 
       // Reference: https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognitionErrorEvent/error
-      if (errorType === 'not-allowed') {
+      if (errorType === "not-allowed") {
         // Permission to use microphone is denied
         // Show a message telling the user
         showErrorState(errorType);
-      } else if (errorType === 'audio-capture') {
+      } else if (errorType === "audio-capture") {
         // No audio capture device
         // Show a message telling the user
         showErrorState(errorType);
-      } else if (errorType === 'no-speech') {
+      } else if (errorType === "no-speech") {
         // No speech was detected
         // Nothing to do here
-      } else if (errorType === 'aborted') {
+      } else if (errorType === "aborted") {
         // Aborted by some specific user-agent mechanism
         // Nothing to do here
-      } else if (errorType === 'network') {
+      } else if (errorType === "network") {
         // Failed to communicate with the speech recognition service
         console.error(
-          '[WebSpeechAPIDemo]',
-          'Failed to communicate with speech recognition service',
+          "[WebSpeechAPIDemo]",
+          "Failed to communicate with speech recognition service"
         );
       } else {
         // Other errors
-        console.error('[WebSpeechAPIDemo error]', event);
-        showErrorState('unknown');
+        console.error("[WebSpeechAPIDemo error]", event);
+        showErrorState("unknown");
       }
     };
 
@@ -188,6 +193,9 @@ export const useSpeechRecognition = ({ language }: Params) => {
     output,
     interimOutput,
     detailedTranscripts,
-    clear: () => setOutput(''),
+    audioRecordingBlobUrl: mediaBlobUrl,
+    clear: () => {
+      setOutput("")
+    },
   };
 };
