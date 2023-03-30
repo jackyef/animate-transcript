@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export const useAudioDuration = (audioBlobUrl?: string) => {
+export const useAudioDuration = (audioBlobUrl?: string | null) => {
   const [duration, setDuration] = useState(0);
 
   useEffect(() => {

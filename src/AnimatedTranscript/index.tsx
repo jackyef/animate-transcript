@@ -12,7 +12,7 @@ const normalizeTimestamp = (
   // This is faulty
   // This only works if the last transcript finished at the exact same time as the audio recording.
   // We need to find a way to better trim this.
-  const endTimestamp = last.startTimestamp + last.duration; 
+  const endTimestamp = last.startTimestamp + last.duration;
   const startTimestamp = endTimestamp - audioDuration;
 
   return transcripts.map((transcript) => ({
@@ -23,12 +23,12 @@ const normalizeTimestamp = (
 
 type Props = {
   detailedTranscripts: DetailedTranscript[];
-  audioBlobUrl?: string;
+  audioBlobUrl?: string | null;
 };
 
 export const AnimatedTranscript = ({
   detailedTranscripts,
-  audioBlobUrl,
+  audioBlobUrl = "",
 }: Props) => {
   const audioDuration = useAudioDuration(audioBlobUrl);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -70,7 +70,7 @@ export const AnimatedTranscript = ({
 
   return (
     <>
-      <audio src={audioBlobUrl} autoPlay controls />
+      <audio src={audioBlobUrl ?? ""} autoPlay controls />
       <motion.div layout className={clsx("w-full max-w-lg mx-auto my-8")}>
         <AnimatePresence mode="popLayout">
           {Boolean(prev) && (
