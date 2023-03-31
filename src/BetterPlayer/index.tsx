@@ -1,7 +1,8 @@
 import { clsx } from "clsx";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAudioDuration } from "./hooks/useAudioDuration";
+import { useRefs } from "./hooks/useRefs";
 
 type Word = {
   alignedWord: string;
@@ -16,7 +17,7 @@ type Word = {
 export type AlignedTranscript = {
   transcript: string;
   words: Word[];
-}
+};
 
 type Props = {
   alignedTranscript: AlignedTranscript;
@@ -28,6 +29,8 @@ export const BetterPlayer = ({
   audioBlobUrl = "",
 }: Props) => {
   const { words } = alignedTranscript;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const refs = useRefs(words.length);
   const audioDuration = useAudioDuration(audioBlobUrl);
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -42,35 +45,62 @@ export const BetterPlayer = ({
   return (
     <>
       <audio src={audioBlobUrl ?? ""} autoPlay controls />
-      <motion.div layout className={clsx("w-full max-w-lg mx-auto my-8")}>
-        <AnimatePresence mode="popLayout">
-          {words.map((word, index) => {
-            if (word.case === "not-found-in-audio") return null
+      <div
+        ref={containerRef}
+        className={clsx(
+          "w-full max-w-lg mx-auto my-8 leading-7",
+          "h-[22rem] overflow-y-hidden"
+        )}
+      >
+        {words.map((word, index) => {
+          if (word.case === "not-found-in-audio") return null;
 
-            return (
-              <motion.div
-                key={`${word.word}-${index}`}
-                className="inline-block mr-1 px-2 py-1 rounded-lg"
-                animate={{
-                  background: ["#ffffff", "#000000", "#ffffff"],
-                  color: ["#000000", "#ffffff", "#000000"],
-                  opacity: [0.5, 1, 1],
-                }}
-                transition={{
-                  type: ["spring", "spring", "spring"],
-                  bounce: [1.5, 1.5, 1.5],
-                  duration: 3 * (word.end - word.start),
-                  times: [0, 0.1, 0.95],
-                  delay: word.start,
-                }}
-              >
-                {word.word}
-              </motion.div>
-            );
-          })}
-    
-        </AnimatePresence>
-      </motion.div>
+          return (
+            <motion.div
+              ref={refs[index]}
+              key={`${word.word}-${index}`}
+              className={clsx(
+                "inline-block mr-[4px] px-2 py-3 my-1 rounded-lg",
+                "text-6xl font-bold"
+              )}
+              animate={{
+                background: ["#ffffff", "#000000", "#000000", "#ffffff"],
+                color: ["#000000", "#ffffff", "#ffffff", "#000000"],
+                opacity: [0.5, 1, 1, 1],
+              }}
+              onAnimationComplete={() => {
+                // Scroll the next word into view if needed.
+                const nextWord = refs[index + 1]
+                  ?.current as unknown as HTMLDivElement;
+
+                if (nextWord && containerRef.current) {
+                  const baseY = nextWord.offsetTop;
+                  const activeElementHeight = nextWord.offsetHeight;
+
+                  if (
+                    baseY + activeElementHeight >
+                    containerRef.current.scrollTop + containerRef.current.offsetHeight
+                  ) {
+                    containerRef.current.scrollTo({
+                      top: baseY - 50 - activeElementHeight,
+                      behavior: "smooth",
+                    });
+                  }
+                }
+              }}
+              transition={{
+                type: ["spring", "spring", "spring", "spring"],
+                bounce: [1.5, 1.5, 1.5, 1.5],
+                duration: 0.25 + (word.end - word.start),
+                times: [0, 0.1, 0.85, 1],
+                delay: word.start,
+              }}
+            >
+              {word.word}
+            </motion.div>
+          );
+        })}
+      </div>
     </>
   );
 };
