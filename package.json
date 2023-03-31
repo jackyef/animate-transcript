@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "aligner-service": "docker run -p 127.0.0.1:41234:8765/tcp -P lowerquality/gentle"
   },
   "dependencies": {
     "@types/dom-mediacapture-record": "^1.0.13",

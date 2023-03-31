@@ -9,9 +9,6 @@ const normalizeTimestamp = (
   audioDuration: number
 ) => {
   const last = transcripts[transcripts.length - 1];
-  // This is faulty
-  // This only works if the last transcript finished at the exact same time as the audio recording.
-  // We need to find a way to better trim this.
   const endTimestamp = last.startTimestamp + last.duration;
   const startTimestamp = endTimestamp - audioDuration;
 
@@ -66,7 +63,8 @@ export const AnimatedTranscriptPlayer = ({
     };
   }, [normalizedTranscripts, next, curr, isInitialized]);
 
-  const currentTranscriptWords = curr?.transcript.split(" ") ?? [];
+  const currentTranscriptWords =
+    curr?.transcript.split(" ").filter(Boolean) ?? [];
 
   return (
     <>
@@ -95,15 +93,22 @@ export const AnimatedTranscriptPlayer = ({
             {currentTranscriptWords.map((word, index) => {
               const durationPerWord =
                 curr.duration / currentTranscriptWords.length / 1000;
+              const delay = index * durationPerWord;
 
               return (
                 <motion.span
                   key={index}
-                  initial={{ opacity: 0.7 }}
-                  animate={{ opacity: 1 }}
+                  className="mr-1 inline-block rounded-md font-bold"
+                  animate={{
+                    background: ['white', 'black', 'red'],
+                    color: ['black', 'white', 'black'],
+                    scale: [1, 1.2, 1]
+                  }}
                   transition={{
+                    // type: "spring",
                     duration: durationPerWord,
-                    delay: index * durationPerWord,
+                    delay,
+                    times: [0, 0.7, 1]
                   }}
                 >
                   {word}{" "}

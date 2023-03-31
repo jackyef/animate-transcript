@@ -1,4 +1,4 @@
-import { DetailedTranscript } from "@/hooks/speech/useSpeechRecognition";
+import { AlignedTranscript } from "@/BetterPlayer";
 
 export async function saveFile(
   file: FileSystemWriteChunkType,
@@ -35,6 +35,7 @@ export async function readFile() {
       {
         accept: {
           "application/json": [".json"],
+          "text/plain": [".txt"],
           "audio/wav": [".wav"],
         },
       },
@@ -44,8 +45,9 @@ export async function readFile() {
   });
 
   const result: {
-    detailedTranscripts: DetailedTranscript[];
+    alignedTranscript: AlignedTranscript;
     audioBlobUrl: string;
+    transcript: string;
   } = {} as any;
 
   await Promise.all(
@@ -55,11 +57,15 @@ export async function readFile() {
         const text = await file.text();
 
         if (file.name.endsWith(".json")) {
-          result.detailedTranscripts = JSON.parse(text) as DetailedTranscript[];
+          result.alignedTranscript = JSON.parse(text) as AlignedTranscript;
         }
 
         if (file.name.endsWith(".wav")) {
           result.audioBlobUrl = URL.createObjectURL(file);
+        }
+
+        if (file.name.endsWith(".txt")) {
+          result.transcript = text;
         }
 
         return text;
