@@ -1,6 +1,6 @@
 import { clsx } from "clsx";
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useAudioDuration } from "./hooks/useAudioDuration";
 import { useRefs } from "./hooks/useRefs";
 
@@ -24,7 +24,7 @@ type Props = {
   audioBlobUrl?: string | null;
 };
 
-export const BetterPlayer = ({
+export const Player = ({
   alignedTranscript,
   audioBlobUrl = "",
 }: Props) => {
@@ -44,7 +44,7 @@ export const BetterPlayer = ({
 
   return (
     <>
-      <audio src={audioBlobUrl ?? ""} autoPlay controls />
+      <audio src={audioBlobUrl ?? ""} autoPlay />
       <div
         ref={containerRef}
         className={clsx(
@@ -82,7 +82,7 @@ export const BetterPlayer = ({
                     containerRef.current.scrollTop + containerRef.current.offsetHeight
                   ) {
                     containerRef.current.scrollTo({
-                      top: baseY - 50 - activeElementHeight,
+                      top: baseY - activeElementHeight - activeElementHeight,
                       behavior: "smooth",
                     });
                   }

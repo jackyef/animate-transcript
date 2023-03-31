@@ -17,6 +17,7 @@
     "@types/node": "18.15.11",
     "@types/react": "18.0.31",
     "@types/react-dom": "18.0.11",
+    "class-variance-authority": "^0.4.0",
     "clsx": "^1.2.1",
     "cors-anywhere": "^0.4.4",
     "eslint": "8.37.0",
@@ -26,6 +27,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-media-recorder": "1.6.5",
+    "tailwind-merge": "^1.11.0",
     "typescript": "5.0.2"
   },
   "devDependencies": {

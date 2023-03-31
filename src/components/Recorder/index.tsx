@@ -1,12 +1,11 @@
 import { useSpeechRecognition } from "@/hooks/speech/useSpeechRecognition";
 import { useState } from "react";
 import { saveBlobUrlToFile, saveFile, readFile } from "@/utils/file";
-import { AlignedTranscript, BetterPlayer } from "@/BetterPlayer";
+import { AlignedTranscript, Player } from "@/components/Player";
 import { useForceAligner } from "@/hooks/speech/useForceAligner";
 
-export const App = () => {
+export const Recorder = () => {
   const speechRecognition = useSpeechRecognition({ language: "en-US" });
-  const [showAnimatedTranscript, setShowAnimatedTranscript] = useState(false);
   const [loadedData, setLoadedData] = useState<{
     audioBlobUrl: string;
     alignedTranscript: AlignedTranscript;
@@ -82,21 +81,12 @@ export const App = () => {
             >
               Save recording and transcript
             </button>
-            <button onClick={() => setShowAnimatedTranscript((prev) => !prev)}>
-              Show animated transcript
-            </button>
           </>
         )}
 
-      {/* {showAnimatedTranscript && (
-        <AnimatedTranscriptPlayer
-          audioBlobUrl={speechRecognition.audioRecordingBlobUrl}
-          detailedTranscripts={speechRecognition.detailedTranscripts}
-        />
-      )} */}
 
       {Boolean(alignedTranscript) && (
-        <BetterPlayer
+        <Player
           key={loadedDataKey}
           audioBlobUrl={speechRecognition.audioRecordingBlobUrl!}
           alignedTranscript={alignedTranscript!}
@@ -105,7 +95,7 @@ export const App = () => {
       )}
 
       {Boolean(loadedData) && (
-        <BetterPlayer
+        <Player
           key={loadedDataKey}
           audioBlobUrl={loadedData?.audioBlobUrl!}
           alignedTranscript={loadedData?.alignedTranscript!}

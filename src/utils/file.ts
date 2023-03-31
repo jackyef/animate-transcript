@@ -1,4 +1,4 @@
-import { AlignedTranscript } from "@/BetterPlayer";
+import { AlignedTranscript } from "@/components/Player";
 
 export async function saveFile(
   file: FileSystemWriteChunkType,
