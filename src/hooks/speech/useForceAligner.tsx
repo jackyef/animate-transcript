@@ -5,12 +5,14 @@ const FORCE_ALIGNER_SERVICE =
   "http://localhost:8080/http://localhost:41234/transcriptions?async=false";
 
 export const useForceAligner = () => {
+  const [isLoading, setIsLoading] = useState(false);
   // send multipart form data
   const [alignedTranscript, setAlignedTranscript] =
     useState<AlignedTranscript | null>(null);
 
   const requestAlignedTranscript = async (audioBlobUrl: string, transcript: string) => {
     setAlignedTranscript(null);
+    setIsLoading(true);
 
     const formData = new FormData();
     const audioArrayBuffer = await new Promise<ArrayBuffer>((resolve) => {
@@ -35,9 +37,11 @@ export const useForceAligner = () => {
     }).then((response) => response.json());
 
     setAlignedTranscript(json as AlignedTranscript);
+    setIsLoading(false);
   };
 
   return {
+    isLoading,
     alignedTranscript,
     requestAlignedTranscript,
   };

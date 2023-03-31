@@ -15,49 +15,69 @@ export const Recorder = () => {
     audioRecordingBlobUrl,
   } = useSpeechRecognition({ language: "en-US" });
   const [transcript, setTranscript] = useState("");
-  const { alignedTranscript, requestAlignedTranscript } = useForceAligner();
+  const [playerKey, setPlayerKey] = useState(0);
+  const { isLoading, alignedTranscript, requestAlignedTranscript } =
+    useForceAligner();
   const recognizedTranscript = `${output} ${interimOutput}`;
 
   return (
     <div className="w-full">
       <div className="flex flex-col gap-2 items-center w-full">
-        <div>
-          <Button
-            variant={isListening ? "destructive" : "subtle"}
-            onClick={() => {
-              toggleListeningState();
+        {!alignedTranscript && !isLoading && (
+          <>
+            <div>
+              <Button
+                variant={isListening ? "destructive" : "subtle"}
+                onClick={() => {
+                  toggleListeningState();
 
-              if (isListening) {
-                // When toggling to stop listening
-                // save the final output
-                setTranscript(output);
-              }
-            }}
-          >
-            {isListening ? "Stop recording" : "Start"}
-          </Button>
-        </div>
+                  if (isListening) {
+                    // When toggling to stop listening
+                    // save the final output
+                    setTranscript(output);
+                  }
+                }}
+              >
+                {isListening ? "Stop recording" : "Start"}
+              </Button>
+            </div>
 
-        <Textarea
-          value={isListening ? recognizedTranscript : transcript}
-          onChange={(e) => setTranscript(e.target.value)}
-        />
+            <Textarea
+              className="min-h-[16rem]"
+              value={isListening ? recognizedTranscript : transcript}
+              onChange={(e) => setTranscript(e.target.value)}
+            />
+          </>
+        )}
 
-        {!isListening && output && (
+        {!isListening && output && !Boolean(alignedTranscript) && (
           <>
             <Button
+              disabled={isLoading}
               onClick={() => {
                 requestAlignedTranscript(audioRecordingBlobUrl!, transcript);
               }}
             >
-              Create aligned transcript
+              {isLoading ? "please wait..." : "Create aligned transcript"}
             </Button>
           </>
         )}
       </div>
 
       {Boolean(alignedTranscript) && (
-        <>
+        <div className="flex flex-col items-center">
+          <Button
+            onClick={() => setPlayerKey((prev) => prev + 1)}
+            variant="ghost"
+          >
+            Replay
+          </Button>
+          <Player
+            key={playerKey}
+            audioBlobUrl={audioRecordingBlobUrl!}
+            alignedTranscript={alignedTranscript!}
+          />
+
           <Button
             onClick={() => {
               saveBlobUrlToFile(
@@ -72,11 +92,7 @@ export const Recorder = () => {
           >
             Save (this will save 2 files, the audio and the transcript)
           </Button>
-          <Player
-            audioBlobUrl={audioRecordingBlobUrl!}
-            alignedTranscript={alignedTranscript!}
-          />
-        </>
+        </div>
       )}
     </div>
   );

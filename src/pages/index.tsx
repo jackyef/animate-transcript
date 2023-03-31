@@ -77,7 +77,7 @@ export default function Home() {
                 variant="ghost"
                 onClick={() => setResetKey((prev) => prev + 1)}
               >
-                Reset
+                Replay
               </Button>
               <Player
                 alignedTranscript={loadedData?.alignedTranscript!}

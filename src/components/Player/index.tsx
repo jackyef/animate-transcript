@@ -24,10 +24,7 @@ type Props = {
   audioBlobUrl?: string | null;
 };
 
-export const Player = ({
-  alignedTranscript,
-  audioBlobUrl = "",
-}: Props) => {
+export const Player = ({ alignedTranscript, audioBlobUrl = "" }: Props) => {
   const { words } = alignedTranscript;
   const containerRef = useRef<HTMLDivElement>(null);
   const refs = useRefs(words.length);
@@ -40,7 +37,16 @@ export const Player = ({
     }
   }, [audioDuration]);
 
-  if (!isInitialized) return null;
+  if (!isInitialized)
+    return (
+      <div
+        className={clsx(
+          "w-full max-w-2xl mx-auto my-8 px-8 leading-7",
+          "h-[24rem] overflow-y-hidden relative",
+          "border-dashed border-8 border-slate-300 rounded-xl"
+        )}
+      ></div>
+    );
 
   return (
     <>
@@ -48,8 +54,9 @@ export const Player = ({
       <div
         ref={containerRef}
         className={clsx(
-          "w-full max-w-lg mx-auto my-8 leading-7",
-          "h-[22rem] overflow-y-hidden"
+          "w-full max-w-2xl mx-auto my-8 px-8 leading-7",
+          "h-[24rem] overflow-y-hidden relative",
+          "border-dashed border-8 border-slate-300 rounded-xl"
         )}
       >
         {words.map((word, index) => {
@@ -79,10 +86,11 @@ export const Player = ({
 
                   if (
                     baseY + activeElementHeight >
-                    containerRef.current.scrollTop + containerRef.current.offsetHeight
+                    containerRef.current.scrollTop +
+                      containerRef.current.offsetHeight
                   ) {
                     containerRef.current.scrollTo({
-                      top: baseY - activeElementHeight - activeElementHeight,
+                      top: baseY - activeElementHeight,
                       behavior: "smooth",
                     });
                   }
