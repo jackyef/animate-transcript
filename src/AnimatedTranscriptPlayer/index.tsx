@@ -26,7 +26,7 @@ type Props = {
   audioBlobUrl?: string | null;
 };
 
-export const AnimatedTranscript = ({
+export const AnimatedTranscriptPlayer = ({
   detailedTranscripts,
   audioBlobUrl = "",
 }: Props) => {
