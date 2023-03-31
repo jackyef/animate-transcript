@@ -57,11 +57,26 @@ export default function Home() {
           </Button>
         </div>
 
-        <div className="mt-8" key={resetKey}>
-          {state === "recording" && <Recorder />}
+        <div className="mt-8 w-full" key={resetKey}>
+          {state === "recording" && (
+            <div className={cn("flex flex-col items-center gap-4 w-full")}>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setResetKey((prev) => prev + 1)}
+              >
+                Reset
+              </Button>
+              <Recorder />
+            </div>
+          )}
           {state === "saved" && Boolean(loadedData) && (
-            <div className={cn('flex flex-col items-center gap-4')}>
-              <Button size="sm" variant="subtle" onClick={() => setResetKey((prev) => prev + 1)}>
+            <div className={cn("flex flex-col items-center gap-4")}>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setResetKey((prev) => prev + 1)}
+              >
                 Reset
               </Button>
               <Player

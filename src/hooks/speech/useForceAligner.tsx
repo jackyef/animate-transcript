@@ -1,15 +1,15 @@
 import { useState } from "react";
-import type { AlignedTranscript } from "@/BetterPlayer";
+import type { AlignedTranscript } from "@/components/Player";
 
 const FORCE_ALIGNER_SERVICE =
   "http://localhost:8080/http://localhost:41234/transcriptions?async=false";
 
-export const useForceAligner = (audioBlobUrl: string, transcript: string) => {
+export const useForceAligner = () => {
   // send multipart form data
   const [alignedTranscript, setAlignedTranscript] =
     useState<AlignedTranscript | null>(null);
 
-  const requestAlignedTranscript = async () => {
+  const requestAlignedTranscript = async (audioBlobUrl: string, transcript: string) => {
     setAlignedTranscript(null);
 
     const formData = new FormData();

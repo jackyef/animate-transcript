@@ -1,107 +1,83 @@
 import { useSpeechRecognition } from "@/hooks/speech/useSpeechRecognition";
-import { useState } from "react";
 import { saveBlobUrlToFile, saveFile, readFile } from "@/utils/file";
-import { AlignedTranscript, Player } from "@/components/Player";
+import { Player } from "@/components/Player";
 import { useForceAligner } from "@/hooks/speech/useForceAligner";
+import { Button } from "@/components/ui/Button";
+import { useState } from "react";
+import { Textarea } from "@/components/ui/Textarea";
 
 export const Recorder = () => {
-  const speechRecognition = useSpeechRecognition({ language: "en-US" });
-  const [loadedData, setLoadedData] = useState<{
-    audioBlobUrl: string;
-    alignedTranscript: AlignedTranscript;
-  } | null>(null);
-  const [loadedDataKey, setLoadedDataKey] = useState(0);
-  const { alignedTranscript, requestAlignedTranscript } = useForceAligner(
-    speechRecognition.audioRecordingBlobUrl!,
-    speechRecognition.output
-  );
+  const {
+    isListening,
+    toggleListeningState,
+    output,
+    interimOutput,
+    audioRecordingBlobUrl,
+  } = useSpeechRecognition({ language: "en-US" });
+  const [transcript, setTranscript] = useState("");
+  const { alignedTranscript, requestAlignedTranscript } = useForceAligner();
+  const recognizedTranscript = `${output} ${interimOutput}`;
 
   return (
-    <main>
-      <div className="flex gap-2">
-        <button onClick={speechRecognition.toggleListeningState}>
-          {speechRecognition.isListening ? "Stop" : "Start"}
-        </button>
-        <button
-          onClick={async () => {
-            const result = await readFile();
-
-            setLoadedData(result);
-          }}
-        >
-          Load existing data
-        </button>
-          <button
+    <div className="w-full">
+      <div className="flex flex-col gap-2 items-center w-full">
+        <div>
+          <Button
+            variant={isListening ? "destructive" : "subtle"}
             onClick={() => {
-              setLoadedDataKey((prev) => prev + 1);
+              toggleListeningState();
+
+              if (isListening) {
+                // When toggling to stop listening
+                // save the final output
+                setTranscript(output);
+              }
             }}
           >
-            Reset
-          </button>
-        {!speechRecognition.isListening && speechRecognition.output && (
-          <button
-            onClick={() => {
-              requestAlignedTranscript();
-            }}
-          >
-            Create aligned transcript
-          </button>
-        )}
-      </div>
-      <p>{speechRecognition.isListening && "Listening..."}</p>
+            {isListening ? "Stop recording" : "Start"}
+          </Button>
+        </div>
 
-      <div>
-        <span dangerouslySetInnerHTML={{ __html: speechRecognition.output }} />{" "}
-        <br />
-        <span className="opacity-50">{speechRecognition.interimOutput}</span>
-      </div>
+        <Textarea
+          value={isListening ? recognizedTranscript : transcript}
+          onChange={(e) => setTranscript(e.target.value)}
+        />
 
-      {!speechRecognition.isListening &&
-        speechRecognition.detailedTranscripts.length > 0 && (
+        {!isListening && output && (
           <>
-            <button
+            <Button
               onClick={() => {
-                saveBlobUrlToFile(
-                  speechRecognition.audioRecordingBlobUrl as string,
-                  `${new Date().toTimeString()}.wav`
-                );
-                saveFile(
-                  JSON.stringify(
-                    speechRecognition.detailedTranscripts,
-                    null,
-                    2
-                  ),
-                  `${new Date().toTimeString()}.json`
-                );
-                saveFile(
-                  speechRecognition.output,
-                  `${new Date().toTimeString()}.txt`
-                );
+                requestAlignedTranscript(audioRecordingBlobUrl!, transcript);
               }}
             >
-              Save recording and transcript
-            </button>
+              Create aligned transcript
+            </Button>
           </>
         )}
-
+      </div>
 
       {Boolean(alignedTranscript) && (
-        <Player
-          key={loadedDataKey}
-          audioBlobUrl={speechRecognition.audioRecordingBlobUrl!}
-          alignedTranscript={alignedTranscript!}
-          // detailedTranscripts={loadedData?.detailedTranscripts!}
-        />
+        <>
+          <Button
+            onClick={() => {
+              saveBlobUrlToFile(
+                audioRecordingBlobUrl as string,
+                `${new Date().toTimeString()}.wav`
+              );
+              saveFile(
+                JSON.stringify(alignedTranscript, null, 2),
+                `${new Date().toTimeString()}.json`
+              );
+            }}
+          >
+            Save (this will save 2 files, the audio and the transcript)
+          </Button>
+          <Player
+            audioBlobUrl={audioRecordingBlobUrl!}
+            alignedTranscript={alignedTranscript!}
+          />
+        </>
       )}
-
-      {Boolean(loadedData) && (
-        <Player
-          key={loadedDataKey}
-          audioBlobUrl={loadedData?.audioBlobUrl!}
-          alignedTranscript={loadedData?.alignedTranscript!}
-          // detailedTranscripts={loadedData?.detailedTranscripts!}
-        />
-      )}
-    </main>
+    </div>
   );
 };
