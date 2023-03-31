@@ -1,9 +1,8 @@
 import { useSpeechRecognition } from "@/hooks/speech/useSpeechRecognition";
-import { AnimatedTranscriptPlayer } from "@/AnimatedTranscriptPlayer";
 import { useState } from "react";
 import { saveBlobUrlToFile, saveFile, readFile } from "@/utils/file";
-import { DetailedTranscript } from "@/hooks/speech/useSpeechRecognition";
 import { AlignedTranscript, BetterPlayer } from "@/BetterPlayer";
+import { useForceAligner } from "@/hooks/speech/useForceAligner";
 
 export const App = () => {
   const speechRecognition = useSpeechRecognition({ language: "en-US" });
@@ -13,6 +12,10 @@ export const App = () => {
     alignedTranscript: AlignedTranscript;
   } | null>(null);
   const [loadedDataKey, setLoadedDataKey] = useState(0);
+  const { alignedTranscript, requestAlignedTranscript } = useForceAligner(
+    speechRecognition.audioRecordingBlobUrl!,
+    speechRecognition.output
+  );
 
   return (
     <main>
@@ -29,13 +32,20 @@ export const App = () => {
         >
           Load existing data
         </button>
-        {loadedData && (
           <button
             onClick={() => {
               setLoadedDataKey((prev) => prev + 1);
             }}
           >
             Reset
+          </button>
+        {!speechRecognition.isListening && speechRecognition.output && (
+          <button
+            onClick={() => {
+              requestAlignedTranscript();
+            }}
+          >
+            Create aligned transcript
           </button>
         )}
       </div>
@@ -78,10 +88,19 @@ export const App = () => {
           </>
         )}
 
-      {showAnimatedTranscript && (
+      {/* {showAnimatedTranscript && (
         <AnimatedTranscriptPlayer
           audioBlobUrl={speechRecognition.audioRecordingBlobUrl}
           detailedTranscripts={speechRecognition.detailedTranscripts}
+        />
+      )} */}
+
+      {Boolean(alignedTranscript) && (
+        <BetterPlayer
+          key={loadedDataKey}
+          audioBlobUrl={speechRecognition.audioRecordingBlobUrl!}
+          alignedTranscript={alignedTranscript!}
+          // detailedTranscripts={loadedData?.detailedTranscripts!}
         />
       )}
 

@@ -154,7 +154,7 @@ export const useSpeechRecognition = ({ language }: Params) => {
 
       setOutput((prev) => {
         if (isLastFinal) {
-          return prev + addedFinalTranscript + "<br>";
+          return prev + addedFinalTranscript;
         }
         return prev + addedFinalTranscript;
       });

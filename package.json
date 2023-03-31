@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "aligner-service": "docker run -p 127.0.0.1:41234:8765/tcp -P lowerquality/gentle"
+    "cors-proxy": "node cors-proxy",
+    "aligner-service:start": "docker run -d -p 127.0.0.1:41234:8765/tcp -P lowerquality/gentle",
+    "aligner-service:stop": "docker stop $(docker ps -q -f ancestor=lowerquality/gentle) && docker rm $(docker ps -aq -f ancestor=lowerquality/gentle)"
   },
   "dependencies": {
     "@types/dom-mediacapture-record": "^1.0.13",
@@ -16,6 +18,7 @@
     "@types/react": "18.0.31",
     "@types/react-dom": "18.0.11",
     "clsx": "^1.2.1",
+    "cors-anywhere": "^0.4.4",
     "eslint": "8.37.0",
     "eslint-config-next": "13.2.4",
     "framer-motion": "^10.10.0",

@@ -45,6 +45,8 @@ export const BetterPlayer = ({
       <motion.div layout className={clsx("w-full max-w-lg mx-auto my-8")}>
         <AnimatePresence mode="popLayout">
           {words.map((word, index) => {
+            if (word.case === "not-found-in-audio") return null
+
             return (
               <motion.div
                 key={`${word.word}-${index}`}
@@ -57,7 +59,8 @@ export const BetterPlayer = ({
                 transition={{
                   type: ["spring", "spring", "spring"],
                   bounce: [1.5, 1.5, 1.5],
-                  duration: 2 * (word.end - word.start),
+                  duration: 3 * (word.end - word.start),
+                  times: [0, 0.1, 0.95],
                   delay: word.start,
                 }}
               >
