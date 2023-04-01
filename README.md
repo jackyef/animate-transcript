@@ -26,6 +26,10 @@ If you are done with the app, you can stop the `gentle` container with the follo
 pnpm gentle:stop
 ```
 
+## Known limitation
+As far as I know, the `SpeechRecognition` API really only works reliable on Chrome for Desktop. So this project won't work well on Safari, or even Chrome on Androids.
+It is also currently limited to only the English language.
+
 ## Is there a free version hosted somewhere?
 No, at least not at the time. If you'd like to do it, it should be pretty easy to do so though. The Next.js app should be able to be hosted on [Vercel](https://vercel.com/) for free. Then it's just a matter of finding a cloud provider of your choice to run the gentle Docker container and the cors proxy.
 
