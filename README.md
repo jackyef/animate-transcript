@@ -1,4 +1,4 @@
-<video src="./videos/result.mp4"></video>
+https://user-images.githubusercontent.com/7252454/229272605-9da3c649-ca30-4394-a836-e8671bd80635.mp4
 
 # `animate-transcript`
 
