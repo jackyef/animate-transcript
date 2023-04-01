@@ -48,9 +48,13 @@ export default function Home() {
             variant={"ghost"}
             onClick={async () => {
               setState("saved");
-              const result = await readFile();
+              try {
+                const result = await readFile();
 
-              setLoadedData(result);
+                setLoadedData(result);
+              } catch {
+                // no-op
+              }
             }}
           >
             Open a saved recording

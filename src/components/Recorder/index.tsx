@@ -79,15 +79,19 @@ export const Recorder = () => {
           />
 
           <Button
-            onClick={() => {
-              saveBlobUrlToFile(
-                audioRecordingBlobUrl as string,
-                `${new Date().toTimeString()}.wav`
-              );
-              saveFile(
-                JSON.stringify(alignedTranscript, null, 2),
-                `${new Date().toTimeString()}.json`
-              );
+            onClick={async () => {
+              try {
+                await saveBlobUrlToFile(
+                  audioRecordingBlobUrl as string,
+                  `${new Date().toTimeString()}.wav`
+                );
+                await saveFile(
+                  JSON.stringify(alignedTranscript, null, 2),
+                  `${new Date().toTimeString()}.json`
+                );
+              } catch {
+                // no-op
+              }
             }}
           >
             Save (this will save 2 files, the audio and the transcript)
