@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"pnpm:dev:*\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "cors-proxy": "node cors-proxy",
-    "aligner-service:start": "docker run -d -p 127.0.0.1:41234:8765/tcp -P lowerquality/gentle",
-    "aligner-service:stop": "docker stop $(docker ps -q -f ancestor=lowerquality/gentle) && docker rm $(docker ps -aq -f ancestor=lowerquality/gentle)"
+    "dev:next": "next dev",
+    "dev:proxy": "node cors-proxy",
+    "gentle:start": "docker run -d -p 127.0.0.1:41234:8765/tcp -P lowerquality/gentle",
+    "gentle:stop": "docker stop $(docker ps -q -f ancestor=lowerquality/gentle) && docker rm $(docker ps -aq -f ancestor=lowerquality/gentle)"
   },
   "dependencies": {
     "@types/dom-mediacapture-record": "^1.0.13",
@@ -33,6 +34,7 @@
   "devDependencies": {
     "@types/wicg-file-system-access": "^2020.9.5",
     "autoprefixer": "^10.4.14",
+    "concurrently": "^8.0.1",
     "postcss": "^8.4.21",
     "tailwindcss": "^3.3.0"
   }
